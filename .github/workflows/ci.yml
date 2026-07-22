@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    name: ${{ matrix.os }} / Python ${{ matrix.python }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python: ["3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - run: uv sync --group dev
+      - run: uv run pytest
+      - run: uv run black --check .
+      - run: uv run ruff check .
+      - run: uv run pre-commit run --all-files
+
+  build:
+    name: Build and clean install
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.12"
+      - run: uv build
+      - run: uv venv /tmp/marp-artifact-updater-clean
+      - run: uv pip install --python /tmp/marp-artifact-updater-clean/bin/python dist/*.whl
+      - run: /tmp/marp-artifact-updater-clean/bin/python -m marp_artifact_updater --version

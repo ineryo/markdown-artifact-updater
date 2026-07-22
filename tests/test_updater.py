@@ -9,7 +9,8 @@ from pathlib import Path
 
 import pytest
 
-from marp_artifact_updater.model import PythonCallDeniedError
+from marp_artifact_updater import updater
+from marp_artifact_updater.model import PathSafetyError, PythonCallDeniedError
 from marp_artifact_updater.updater import synchronize_markdown
 
 
@@ -167,6 +168,101 @@ def test_atomic_apply_leaves_no_temporary_file(tmp_path: Path) -> None:
 
     assert "x = 1" in deck.read_text(encoding="utf-8")
     assert list(tmp_path.glob(".marp-artifact-updater-*")) == []
+
+
+def test_atomic_apply_failure_preserves_original_and_removes_temporary_file(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    _write(tmp_path / "source.py", "# snippet:start x\nx = 1\n# snippet:end x\n")
+    deck = _write(
+        tmp_path / "deck.md",
+        "<!-- snippet-include: source.py#x -->\nold\n<!-- snippet-include-end -->\n",
+    )
+    original = deck.read_bytes()
+
+    def fail_replace(source: Path, destination: Path) -> None:
+        raise OSError("simulated replacement failure")
+
+    monkeypatch.setattr(updater.os, "replace", fail_replace)
+
+    with pytest.raises(OSError, match="simulated replacement failure"):
+        synchronize_markdown(tmp_path, deck, apply=True)
+
+    assert deck.read_bytes() == original
+    assert list(tmp_path.glob(".marp-artifact-updater-*")) == []
+
+
+def test_symlinked_snippet_source_is_refused_without_writing_deck(
+    tmp_path: Path,
+) -> None:
+    outside = _write(
+        tmp_path.parent / "outside.py",
+        "# snippet:start private\nsecret = 'no'\n# snippet:end private\n",
+    )
+    link = tmp_path / "linked.py"
+    try:
+        os.symlink(outside, link)
+    except OSError as error:
+        pytest.skip(f"symlinks unavailable: {error}")
+    deck = _write(
+        tmp_path / "deck.md",
+        "<!-- snippet-include: linked.py#private -->\nold\n<!-- snippet-include-end -->\n",
+    )
+    original = deck.read_bytes()
+
+    with pytest.raises(PathSafetyError, match="escapes repository root"):
+        synchronize_markdown(tmp_path, deck, apply=True)
+
+    assert deck.read_bytes() == original
+
+
+def test_notebook_snippets_do_not_execute_saved_cell_code(tmp_path: Path) -> None:
+    marker = tmp_path / "notebook-executed.txt"
+    _write(
+        tmp_path / "analysis.ipynb",
+        json.dumps(
+            {
+                "cells": [
+                    {
+                        "cell_type": "code",
+                        "source": [
+                            "# snippet:start cell\n",
+                            f"Path({str(marker)!r}).write_text('executed')\n",
+                            "# snippet:end cell\n",
+                        ],
+                    }
+                ]
+            }
+        ),
+    )
+    deck = _write(
+        tmp_path / "deck.md",
+        "<!-- snippet-include: analysis.ipynb#cell -->\nold\n<!-- snippet-include-end -->\n",
+    )
+
+    result = synchronize_markdown(tmp_path, deck)
+
+    assert "notebook-executed.txt" in result.generated_text
+    assert not marker.exists()
+
+
+def test_apply_preserves_crlf_outside_generated_region(tmp_path: Path) -> None:
+    _write(
+        tmp_path / "source.py",
+        "# snippet:start x\r\nx = 1\r\n# snippet:end x\r\n",
+    )
+    deck = tmp_path / "deck.md"
+    deck.write_bytes(
+        b"before\r\n<!-- snippet-include: source.py#x -->\r\n```python\r\nold\r\n```\r\n"
+        b"<!-- snippet-include-end -->\r\nafter\r\n"
+    )
+
+    synchronize_markdown(tmp_path, deck, apply=True)
+
+    applied = deck.read_bytes()
+    assert applied.startswith(b"before\r\n")
+    assert applied.endswith(b"<!-- snippet-include-end -->\r\nafter\r\n")
+    assert b"\n" not in applied.replace(b"\r\n", b"")
 
 
 def test_provenance_reports_prior_generated_regions_and_stale_warnings(

@@ -62,7 +62,11 @@ def replace_regions(markdown: str, renderer) -> str:
             end=match.group("end"),
         )
         rendered = renderer(region)
-        return f"{region.start}\n{rendered}\n{region.end}"
+        line_ending = "\r\n" if "\r\n" in region.body else "\n"
+        normalized = rendered.replace("\r\n", "\n").replace("\r", "\n")
+        return line_ending.join(
+            (region.start, normalized.replace("\n", line_ending), region.end)
+        )
 
     return _REGION_RE.sub(replacement, markdown)
 

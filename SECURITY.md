@@ -12,4 +12,6 @@ before deciding on remediation and disclosure.
 
 ## Supported versions
 
-Only the current development revision is supported during the bootstrap phase.
+Only the current development revision is supported. In particular, report
+containment, symlink, atomic-write, notebook-execution, or Python-call
+allowlist bypasses as security issues.

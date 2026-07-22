@@ -19,13 +19,12 @@ def _fingerprint(text: str) -> str:
 
 def _atomic_write(path: Path, content: str) -> None:
     with tempfile.NamedTemporaryFile(
-        "w",
-        encoding="utf-8",
+        "wb",
         dir=path.parent,
         prefix=".marp-artifact-updater-",
         delete=False,
     ) as temporary:
-        temporary.write(content)
+        temporary.write(content.encode("utf-8"))
         temporary.flush()
         os.fsync(temporary.fileno())
         temporary_path = Path(temporary.name)
@@ -48,7 +47,7 @@ def synchronize_markdown(
     markdown = resolve_under_root(root, markdown_path)
     if not markdown.is_file():
         raise IncludeBlockError(f"Markdown file not found: {markdown_path}")
-    original = markdown.read_text(encoding="utf-8")
+    original = markdown.read_bytes().decode("utf-8")
     if not iter_regions(original):
         raise IncludeBlockError("No recognized generated regions found")
     warnings: list[str] = []
