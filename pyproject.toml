@@ -1,0 +1,45 @@
+[build-system]
+requires = ["hatchling>=1.27.0"]
+build-backend = "hatchling.build"
+
+[project]
+name = "marp-artifact-updater"
+version = "0.0.0.dev0"
+description = "A future deterministic updater for explicit generated regions in Marp Markdown."
+readme = "README.md"
+requires-python = ">=3.12"
+license = { file = "LICENSE" }
+authors = [{ name = "Marp Artifact Updater contributors" }]
+classifiers = [
+  "Development Status :: 2 - Pre-Alpha",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.12",
+]
+dependencies = []
+
+[project.scripts]
+marp-artifact-updater = "marp_artifact_updater.cli:main"
+
+[dependency-groups]
+dev = [
+  "black>=25.1.0",
+  "pre-commit>=4.2.0",
+  "pytest>=8.3.0",
+  "ruff>=0.11.0",
+]
+
+[tool.black]
+line-length = 88
+target-version = ["py312"]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 88
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+ignore = ["E501"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
