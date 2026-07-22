@@ -21,12 +21,14 @@ def test_package_exposes_bootstrap_version() -> None:
     assert __version__ == "0.0.0.dev0"
 
 
-def test_module_help_describes_bootstrap_only_surface() -> None:
+def test_module_help_describes_synchronization_surface() -> None:
     result = _run("--help")
 
     assert result.returncode == 0
     assert "marp-artifact-updater" in result.stdout
-    assert "bootstrap" in result.stdout.lower()
+    assert "synchronize" in result.stdout.lower()
+    assert "check" in result.stdout
+    assert "update" in result.stdout
 
 
 def test_module_version_reports_package_version() -> None:
