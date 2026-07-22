@@ -26,5 +26,4 @@ repository is clean before requesting review.
 
 ## Licensing and publication
 
-No public license has been granted. Do not publish or redistribute the project
-until the H1 human license decision is recorded.
+By contributing to this repository, you agree that your contributions will be licensed under the repository's [MIT License](LICENSE).

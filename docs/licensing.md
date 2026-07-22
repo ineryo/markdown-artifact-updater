@@ -1,13 +1,10 @@
-# Licensing status
+# Licensing
 
-## Temporary local-only notice
+Marp Artifact Updater is licensed under the MIT License.
 
-The repository is intentionally not publicly licensed during T2. `LICENSE`
-states that no public license is granted and that redistribution and publication
-are not authorized.
+Copyright (c) 2026 Igor Nery.
 
-## H1 decision required
-
-H1, the Human Publication Gate, must select and record the final license before
-any public release, publication, or redistribution. This bootstrap does not
-select MIT, Apache, BSD, GPL, MPL, or any other open-source license.
+The complete license text is in [LICENSE](../LICENSE). The MIT License permits
+use, copying, modification, merging, publication, distribution, sublicensing,
+and sale of the Software, subject to inclusion of the copyright and permission
+notice in copies or substantial portions of the Software.

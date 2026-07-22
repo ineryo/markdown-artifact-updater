@@ -56,9 +56,8 @@ uv run pre-commit run --all-files
 
 ## Licensing
 
-No public license is currently granted. Do not redistribute or publish this
-repository until the human H1 license decision is recorded. See `LICENSE` and
-`docs/licensing.md`.
+This project is licensed under the [MIT License](LICENSE). See
+[licensing details](docs/licensing.md).
 
 ## Security
 
