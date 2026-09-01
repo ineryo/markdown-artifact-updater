@@ -16,7 +16,7 @@ from marp_artifact_updater.updater import synchronize_markdown
 
 def _write(path: Path, content: str) -> Path:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(content, encoding="utf-8")
+    path.write_bytes(content.encode("utf-8"))
     return path
 
 
