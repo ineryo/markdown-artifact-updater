@@ -10,7 +10,11 @@ from pathlib import Path
 import pytest
 
 from marp_artifact_updater import updater
-from marp_artifact_updater.model import PathSafetyError, PythonCallDeniedError
+from marp_artifact_updater.model import (
+    IncludeBlockError,
+    PathSafetyError,
+    PythonCallDeniedError,
+)
 from marp_artifact_updater.updater import synchronize_markdown
 
 
@@ -45,6 +49,48 @@ def test_dry_run_replaces_only_explicit_snippet_region_and_is_idempotent(
     assert applied.changed is True
     assert repeated.changed is False
     assert source.exists()
+
+
+def test_cpp_snippet_uses_valid_cpp_line_comment_markers(tmp_path: Path) -> None:
+    _write(
+        tmp_path / "src" / "selection_sort.cpp",
+        "// snippet:start selection-sort\n"
+        "template <typename T>\n"
+        "void selection_sort(T& values) {}\n"
+        "// snippet:end selection-sort\n",
+    )
+    deck = _write(
+        tmp_path / "slides" / "deck.md",
+        "<!-- snippet-include: src/selection_sort.cpp#selection-sort -->\n"
+        "```cpp\nold\n```\n"
+        "<!-- snippet-include-end -->\n",
+    )
+
+    result = synchronize_markdown(tmp_path, deck)
+
+    assert "void selection_sort(T& values) {}" in result.generated_text
+    assert "snippet:start" not in result.generated_text
+    assert "```cpp" in result.generated_text
+
+
+def test_cpp_snippet_rejects_hash_markers(tmp_path: Path) -> None:
+    _write(
+        tmp_path / "selection_sort.cpp",
+        "# snippet:start selection-sort\n"
+        "void selection_sort() {}\n"
+        "# snippet:end selection-sort\n",
+    )
+    deck = _write(
+        tmp_path / "deck.md",
+        "<!-- snippet-include: selection_sort.cpp#selection-sort -->\n"
+        "old\n"
+        "<!-- snippet-include-end -->\n",
+    )
+
+    with pytest.raises(
+        IncludeBlockError, match="snippet marker not found: selection-sort"
+    ):
+        synchronize_markdown(tmp_path, deck)
 
 
 def test_saved_notebook_cells_are_read_without_execution(tmp_path: Path) -> None:

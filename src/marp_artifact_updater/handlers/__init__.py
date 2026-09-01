@@ -17,6 +17,7 @@ from marp_artifact_updater.paths import markdown_relative_path, resolve_under_ro
 
 _IMAGE_SUFFIXES = {".png", ".jpg", ".jpeg", ".gif", ".svg", ".webp", ".avif"}
 _HTML_SUFFIXES = {".html", ".htm"}
+_CPP_SUFFIXES = {".cpp", ".cc", ".cxx", ".hpp", ".h"}
 
 
 def _split_items(value: str) -> list[str]:
@@ -39,23 +40,29 @@ def _read_text(root: Path, path_text: str) -> str:
     return path.read_text(encoding="utf-8")
 
 
-def _marked_content(text: str, kind: str, name: str, comment: str) -> str:
-    if comment == "html":
+def _marked_content(text: str, kind: str, name: str, marker_prefix: str) -> str:
+    if marker_prefix == "html":
         pattern = re.compile(
             rf"<!--\s*{re.escape(kind)}:start\s+{re.escape(name)}\s*-->\s*"
             rf"(?P<body>.*?)\s*<!--\s*{re.escape(kind)}:end\s+{re.escape(name)}\s*-->",
             re.DOTALL,
         )
     else:
+        escaped_prefix = re.escape(marker_prefix)
         pattern = re.compile(
-            rf"^\s*#\s*{re.escape(kind)}:start\s+{re.escape(name)}\s*$\n?"
-            rf"(?P<body>.*?)^\s*#\s*{re.escape(kind)}:end\s+{re.escape(name)}\s*$",
+            rf"^\s*{escaped_prefix}\s*{re.escape(kind)}:start\s+{re.escape(name)}\s*$\n?"
+            rf"(?P<body>.*?)^\s*{escaped_prefix}\s*{re.escape(kind)}:end\s+{re.escape(name)}\s*$",
             re.MULTILINE | re.DOTALL,
         )
     match = pattern.search(text)
     if match is None:
         raise IncludeBlockError(f"{kind} marker not found: {name}")
     return match.group("body").strip("\n")
+
+
+def _snippet_marker_prefix(source_path: Path) -> str:
+    """Return the valid line-comment prefix for a snippet source file."""
+    return "//" if source_path.suffix.lower() in _CPP_SUFFIXES else "#"
 
 
 def _render_snippet(region: IncludeRegion, root: Path) -> str:
@@ -74,7 +81,7 @@ def _render_snippet(region: IncludeRegion, root: Path) -> str:
         )
     else:
         source = _read_text(root, path_text)
-    code = _marked_content(source, "snippet", name, "hash")
+    code = _marked_content(source, "snippet", name, _snippet_marker_prefix(source_path))
     fence = re.search(r"^\s*(`{3,}|~{3,})([^\n]*)", region.body)
     marker, language = fence.groups() if fence else ("```", "text")
     return f"{marker}{language.rstrip()}\n{code}\n{marker}"

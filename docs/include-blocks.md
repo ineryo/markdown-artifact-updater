@@ -43,10 +43,17 @@ result fields and SHA-256 fingerprints.
 <!-- provenance-include-end -->
 ```
 
-Snippet source markers use `# snippet:start NAME` and `# snippet:end NAME`.
-Quote and equation sources use `<!-- quote:start NAME -->` / corresponding end
-markers, and equivalent `equation` markers. Saved `.ipynb` snippets read only
-stored code-cell text; notebooks are never run.
+Snippet source markers use the line-comment syntax of their source language:
+
+| Source file | Markers |
+| --- | --- |
+| Python (`.py`) and saved notebooks (`.ipynb`) | `# snippet:start NAME` / `# snippet:end NAME` |
+| C++ (`.cpp`, `.cc`, `.cxx`, `.hpp`, `.h`) | `// snippet:start NAME` / `// snippet:end NAME` |
+
+Other text sources retain the original `#` marker syntax. Quote and equation
+sources use `<!-- quote:start NAME -->` / corresponding end markers, and
+equivalent `equation` markers. Saved `.ipynb` snippets read only stored
+code-cell text; notebooks are never run.
 
 CSV tables require no optional dependency. Other table formats fail with an
 explicit message explaining that pandas and the corresponding reader engine are
