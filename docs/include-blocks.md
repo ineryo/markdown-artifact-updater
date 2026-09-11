@@ -43,14 +43,21 @@ result fields and SHA-256 fingerprints.
 <!-- provenance-include-end -->
 ```
 
-Snippet source markers use the line-comment syntax of their source language:
+Snippet extraction is language-light: recognized standalone control lines use
+`#`, `//`, `--`, `%`, `;`, or HTML comments, regardless of the file suffix.
+Extensions affect only the suggested Markdown fence. Each name has exactly one
+start and end marker; intervals may be independent, nested, or crossing. All
+recognized marker control lines are omitted from rendered source.
 
 | Source file | Markers |
 | --- | --- |
 | Python (`.py`) and saved notebooks (`.ipynb`) | `# snippet:start NAME` / `# snippet:end NAME` |
 | C++ (`.cpp`, `.cc`, `.cxx`, `.hpp`, `.h`) | `// snippet:start NAME` / `// snippet:end NAME` |
+| SQL, MATLAB, Lisp, HTML | `--`, `%`, `;`, or `<!-- snippet:start NAME -->` |
 
-Other text sources retain the original `#` marker syntax. Quote and equation
+Unknown extensions may use any recognized marker family. Explicit existing
+target fences are preserved; otherwise a small suffix map is used (`.h` falls
+back to `c`) and then the suffix itself or `text`. Quote and equation
 sources use `<!-- quote:start NAME -->` / corresponding end markers, and
 equivalent `equation` markers. Saved `.ipynb` snippets read only stored
 code-cell text; notebooks are never run.

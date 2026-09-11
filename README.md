@@ -42,6 +42,14 @@ See [safety](docs/safety.md) for containment, atomic-write, notebook, and
 line-ending guarantees. See [Python calls](docs/python-calls.md) before opting
 in to executing a reviewed module.
 
+## Snippet semantics
+
+Snippets are explicit named source intervals, not parsed language constructs.
+Standalone `snippet:start NAME` and `snippet:end NAME` markers are recognized
+with `#`, `//`, `--`, `%`, `;`, or HTML-comment syntax. Intervals may be
+disjoint, nested, or crossing; source extensions select only a conservative
+Markdown fence hint. Notebooks are read as stored code cells and never run.
+
 ## Development
 
 Python 3.12+ and [uv](https://docs.astral.sh/uv/) are required.

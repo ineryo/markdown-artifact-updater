@@ -10,11 +10,7 @@ from pathlib import Path
 import pytest
 
 from marp_artifact_updater import updater
-from marp_artifact_updater.model import (
-    IncludeBlockError,
-    PathSafetyError,
-    PythonCallDeniedError,
-)
+from marp_artifact_updater.model import PathSafetyError, PythonCallDeniedError
 from marp_artifact_updater.updater import synchronize_markdown
 
 
@@ -73,7 +69,7 @@ def test_cpp_snippet_uses_valid_cpp_line_comment_markers(tmp_path: Path) -> None
     assert "```cpp" in result.generated_text
 
 
-def test_cpp_snippet_rejects_hash_markers(tmp_path: Path) -> None:
+def test_cpp_snippet_accepts_a_recognized_language_light_marker(tmp_path: Path) -> None:
     _write(
         tmp_path / "selection_sort.cpp",
         "# snippet:start selection-sort\n"
@@ -87,10 +83,9 @@ def test_cpp_snippet_rejects_hash_markers(tmp_path: Path) -> None:
         "<!-- snippet-include-end -->\n",
     )
 
-    with pytest.raises(
-        IncludeBlockError, match="snippet marker not found: selection-sort"
-    ):
-        synchronize_markdown(tmp_path, deck)
+    result = synchronize_markdown(tmp_path, deck)
+
+    assert "void selection_sort() {}" in result.generated_text
 
 
 def test_saved_notebook_cells_are_read_without_execution(tmp_path: Path) -> None:

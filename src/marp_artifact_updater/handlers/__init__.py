@@ -14,6 +14,7 @@ from typing import Any
 from marp_artifact_updater.model import IncludeBlockError, PythonCallDeniedError
 from marp_artifact_updater.parser import IncludeRegion, parse_spec, require_spec
 from marp_artifact_updater.paths import markdown_relative_path, resolve_under_root
+from marp_artifact_updater.snippets import extract_snippet, resolve_fence_language
 
 _IMAGE_SUFFIXES = {".png", ".jpg", ".jpeg", ".gif", ".svg", ".webp", ".avif"}
 _HTML_SUFFIXES = {".html", ".htm"}
@@ -68,22 +69,10 @@ def _snippet_marker_prefix(source_path: Path) -> str:
 def _render_snippet(region: IncludeRegion, root: Path) -> str:
     path_text, name = require_spec("snippet", region.spec).rsplit("#", 1)
     source_path = resolve_under_root(root, path_text)
-    if source_path.suffix.lower() == ".ipynb":
-        notebook = json.loads(_read_text(root, path_text))
-        source = "\n\n".join(
-            (
-                "".join(cell.get("source", []))
-                if isinstance(cell.get("source", []), list)
-                else str(cell.get("source", ""))
-            )
-            for cell in notebook.get("cells", [])
-            if cell.get("cell_type") == "code"
-        )
-    else:
-        source = _read_text(root, path_text)
-    code = _marked_content(source, "snippet", name, _snippet_marker_prefix(source_path))
+    code = extract_snippet(source_path, name).text
     fence = re.search(r"^\s*(`{3,}|~{3,})([^\n]*)", region.body)
-    marker, language = fence.groups() if fence else ("```", "text")
+    marker, language = fence.groups() if fence else ("```", "")
+    language = resolve_fence_language(source_path, language)
     return f"{marker}{language.rstrip()}\n{code}\n{marker}"
 
 
