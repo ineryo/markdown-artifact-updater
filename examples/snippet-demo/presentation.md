@@ -30,7 +30,7 @@ def normalize_name(value: str) -> str:
 
 # 2. Include it in the presentation
 
-```markdown
+~~~~markdown
 <!-- snippet-include: source.py#normalize-name -->
 ```python
 def normalize_name(value: str) -> str:
@@ -40,7 +40,7 @@ def normalize_name(value: str) -> str:
 
 ```
 <!-- snippet-include-end -->
-```
+~~~~
 
 The updater replaces only the bounded region body.
 
