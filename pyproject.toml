@@ -3,13 +3,13 @@ requires = ["hatchling>=1.27.0"]
 build-backend = "hatchling.build"
 
 [project]
-name = "marp-artifact-updater"
+name = "markdown-artifact-updater"
 version = "0.0.0.dev0"
-description = "A future deterministic updater for explicit generated regions in Marp Markdown."
+description = "A deterministic updater for explicit generated regions in Markdown."
 readme = "README.md"
 requires-python = ">=3.12"
 license = { file = "LICENSE" }
-authors = [{ name = "Marp Artifact Updater contributors" }]
+authors = [{ name = "Markdown Artifact Updater contributors" }]
 classifiers = [
   "Development Status :: 2 - Pre-Alpha",
   "Programming Language :: Python :: 3",
@@ -19,7 +19,7 @@ classifiers = [
 dependencies = []
 
 [project.scripts]
-marp-artifact-updater = "marp_artifact_updater.cli:main"
+markdown-artifact-updater = "markdown_artifact_updater.cli:main"
 
 [dependency-groups]
 dev = [

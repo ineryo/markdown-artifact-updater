@@ -6,16 +6,16 @@ import argparse
 import json
 from pathlib import Path
 
-from marp_artifact_updater import __version__
-from marp_artifact_updater.model import MarpArtifactUpdaterError
-from marp_artifact_updater.updater import synchronize_markdown
+from markdown_artifact_updater import __version__
+from markdown_artifact_updater.model import MarpArtifactUpdaterError
+from markdown_artifact_updater.updater import synchronize_markdown
 
 
 def build_parser() -> argparse.ArgumentParser:
     """Build command parsing with dry-run behavior as the default."""
     parser = argparse.ArgumentParser(
-        prog="marp-artifact-updater",
-        description="Synchronize explicit generated regions in a Marp Markdown file.",
+        prog="markdown-artifact-updater",
+        description="Synchronize explicit generated regions in a Markdown file.",
     )
     parser.add_argument("--version", action="version", version=__version__)
     commands = parser.add_subparsers(dest="command", required=True)

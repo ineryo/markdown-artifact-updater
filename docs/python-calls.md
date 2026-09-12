@@ -11,7 +11,7 @@ default, even for a module located under the repository root.
 To render this region, pass the exact module name on the command line:
 
 ```console
-marp-artifact-updater update deck.md --repo-root . --apply \
+markdown-artifact-updater update deck.md --repo-root . --apply \
   --allow-python-module safe_examples
 ```
 

@@ -1,6 +1,6 @@
 # Safety model
 
-`marp-artifact-updater` treats a Markdown file as mostly immutable. It renders
+`markdown-artifact-updater` treats a Markdown file as mostly immutable. It renders
 only bodies bounded by a matching `*-include` opening and closing comment.
 Text outside recognized regions is byte-preserved, including CRLF line endings.
 

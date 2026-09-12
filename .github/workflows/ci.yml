@@ -33,6 +33,6 @@ jobs:
         with:
           python-version: "3.12"
       - run: uv build
-      - run: uv venv /tmp/marp-artifact-updater-clean
-      - run: uv pip install --python /tmp/marp-artifact-updater-clean/bin/python dist/*.whl
-      - run: /tmp/marp-artifact-updater-clean/bin/python -m marp_artifact_updater --version
+      - run: uv venv /tmp/markdown-artifact-updater-clean
+      - run: uv pip install --python /tmp/markdown-artifact-updater-clean/bin/python dist/*.whl
+      - run: /tmp/markdown-artifact-updater-clean/bin/python -m markdown_artifact_updater --version

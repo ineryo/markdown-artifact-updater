@@ -5,7 +5,7 @@ from __future__ import annotations
 import os
 from pathlib import Path
 
-from marp_artifact_updater.model import PathSafetyError
+from markdown_artifact_updater.model import PathSafetyError
 
 
 def normalize_repository_path(path_text: str) -> Path:

@@ -1,6 +1,6 @@
-# Marp Artifact Updater
+# Markdown Artifact Updater
 
-Marp Artifact Updater deterministically refreshes explicitly delimited generated
+Markdown Artifact Updater deterministically refreshes explicitly delimited generated
 regions in a Marp Markdown deck. It changes only region bodies, defaults to
 read-only operation, and requires an explicit `--apply` before writing.
 
@@ -11,7 +11,7 @@ tools and run the package in place:
 
 ```console
 uv sync --group dev
-uv run marp-artifact-updater --help
+uv run markdown-artifact-updater --help
 ```
 
 To install the current checkout as a user-facing command, use:
@@ -24,22 +24,22 @@ The complete executable presentation example is
 [`examples/snippet-demo/`](examples/snippet-demo/). From the repository root:
 
 ```console
-uv run marp-artifact-updater update presentation.md --repo-root examples/snippet-demo --apply
-uv run marp-artifact-updater check presentation.md --repo-root examples/snippet-demo
+uv run markdown-artifact-updater update presentation.md --repo-root examples/snippet-demo --apply
+uv run markdown-artifact-updater check presentation.md --repo-root examples/snippet-demo
 ```
 
 The first `check` exits 1 because the region is stale. After `update --apply`,
 the final `check` exits 0. Repeating the update makes no further change.
 
-`python -m marp_artifact_updater` provides the same command surface.
+`python -m markdown_artifact_updater` provides the same command surface.
 
 ## Commands
 
 ```console
-marp-artifact-updater check slides/deck.md --repo-root .
-marp-artifact-updater update slides/deck.md --repo-root .       # dry run
-marp-artifact-updater update slides/deck.md --repo-root . --apply
-marp-artifact-updater check slides/deck.md --repo-root . --json
+markdown-artifact-updater check slides/deck.md --repo-root .
+markdown-artifact-updater update slides/deck.md --repo-root .       # dry run
+markdown-artifact-updater update slides/deck.md --repo-root . --apply
+markdown-artifact-updater check slides/deck.md --repo-root . --json
 ```
 
 An update needed in dry-run mode exits 1. Invalid or unsafe input exits 2.

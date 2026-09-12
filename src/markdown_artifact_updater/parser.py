@@ -5,7 +5,7 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass
 
-from marp_artifact_updater.model import IncludeBlockError
+from markdown_artifact_updater.model import IncludeBlockError
 
 SUPPORTED_KINDS = (
     "snippet",

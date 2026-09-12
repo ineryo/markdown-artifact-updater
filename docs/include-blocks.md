@@ -1,6 +1,6 @@
 # Explicit generated regions
 
-`marp-artifact-updater` only changes content between a recognized opening and
+`markdown-artifact-updater` only changes content between a recognized opening and
 closing HTML comment. All text outside those regions is preserved byte-for-byte.
 Paths are repository-relative and must resolve under `--repo-root`; parent-path
 and symlink escapes are refused.
@@ -8,10 +8,10 @@ and symlink escapes are refused.
 ## Commands
 
 ```text
-marp-artifact-updater check slides/deck.md --repo-root .
-marp-artifact-updater update slides/deck.md --repo-root .       # dry run
-marp-artifact-updater update slides/deck.md --repo-root . --apply
-marp-artifact-updater check slides/deck.md --repo-root . --json
+markdown-artifact-updater check slides/deck.md --repo-root .
+markdown-artifact-updater update slides/deck.md --repo-root .       # dry run
+markdown-artifact-updater update slides/deck.md --repo-root . --apply
+markdown-artifact-updater check slides/deck.md --repo-root . --json
 ```
 
 `check` and `update` without `--apply` never write. A needed update returns exit
@@ -75,7 +75,7 @@ Python calls are rejected by default. They execute only when a module is named
 in the deck and explicitly allowlisted on the command line:
 
 ```text
-marp-artifact-updater update deck.md --apply --allow-python-module safe_examples
+markdown-artifact-updater update deck.md --apply --allow-python-module safe_examples
 ```
 
 ```markdown

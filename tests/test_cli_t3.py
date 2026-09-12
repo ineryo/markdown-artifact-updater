@@ -16,7 +16,7 @@ def _write(path: Path, content: str) -> Path:
 
 def _run(root: Path, *arguments: str) -> subprocess.CompletedProcess[str]:
     return subprocess.run(
-        [sys.executable, "-m", "marp_artifact_updater", *arguments],
+        [sys.executable, "-m", "markdown_artifact_updater", *arguments],
         check=False,
         capture_output=True,
         cwd=root,

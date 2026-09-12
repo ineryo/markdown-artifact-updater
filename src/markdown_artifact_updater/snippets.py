@@ -7,7 +7,7 @@ import re
 from dataclasses import dataclass
 from pathlib import Path
 
-from marp_artifact_updater.model import IncludeBlockError
+from markdown_artifact_updater.model import IncludeBlockError
 
 _MARKER = re.compile(
     r"^\s*(?:(?P<line>#|//|--|%|;)\s*snippet:(?P<kind>start|end)\s+(?P<name>[^\s]+)\s*|<!--\s*snippet:(?P<html_kind>start|end)\s+(?P<html_name>[^\s]+)\s*-->)\s*$"

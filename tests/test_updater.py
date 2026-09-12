@@ -9,9 +9,9 @@ from pathlib import Path
 
 import pytest
 
-from marp_artifact_updater import updater
-from marp_artifact_updater.model import PathSafetyError, PythonCallDeniedError
-from marp_artifact_updater.updater import synchronize_markdown
+from markdown_artifact_updater import updater
+from markdown_artifact_updater.model import PathSafetyError, PythonCallDeniedError
+from markdown_artifact_updater.updater import synchronize_markdown
 
 
 def _write(path: Path, content: str) -> Path:
@@ -208,7 +208,7 @@ def test_atomic_apply_leaves_no_temporary_file(tmp_path: Path) -> None:
     synchronize_markdown(tmp_path, deck, apply=True)
 
     assert "x = 1" in deck.read_text(encoding="utf-8")
-    assert list(tmp_path.glob(".marp-artifact-updater-*")) == []
+    assert list(tmp_path.glob(".markdown-artifact-updater-*")) == []
 
 
 def test_atomic_apply_failure_preserves_original_and_removes_temporary_file(
@@ -230,7 +230,7 @@ def test_atomic_apply_failure_preserves_original_and_removes_temporary_file(
         synchronize_markdown(tmp_path, deck, apply=True)
 
     assert deck.read_bytes() == original
-    assert list(tmp_path.glob(".marp-artifact-updater-*")) == []
+    assert list(tmp_path.glob(".markdown-artifact-updater-*")) == []
 
 
 def test_symlinked_snippet_source_is_refused_without_writing_deck(

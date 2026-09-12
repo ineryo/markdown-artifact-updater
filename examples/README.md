@@ -5,9 +5,9 @@
 from the repository root:
 
 ```console
-uv run marp-artifact-updater check deck.md --repo-root examples/basic
-uv run marp-artifact-updater update deck.md --repo-root examples/basic --apply
-uv run marp-artifact-updater check deck.md --repo-root examples/basic
+uv run markdown-artifact-updater check deck.md --repo-root examples/basic
+uv run markdown-artifact-updater update deck.md --repo-root examples/basic --apply
+uv run markdown-artifact-updater check deck.md --repo-root examples/basic
 ```
 
 The first command reports a pending update with exit status 1. The second

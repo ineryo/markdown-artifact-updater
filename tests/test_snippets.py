@@ -5,8 +5,8 @@ from pathlib import Path
 
 import pytest
 
-from marp_artifact_updater.model import IncludeBlockError
-from marp_artifact_updater.snippets import extract_snippet, resolve_fence_language
+from markdown_artifact_updater.model import IncludeBlockError
+from markdown_artifact_updater.snippets import extract_snippet, resolve_fence_language
 
 
 def test_marker_families_and_unknown_suffix_are_language_light(tmp_path: Path) -> None:

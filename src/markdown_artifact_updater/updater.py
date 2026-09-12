@@ -7,10 +7,10 @@ import os
 import tempfile
 from pathlib import Path
 
-from marp_artifact_updater.handlers import render_region
-from marp_artifact_updater.model import IncludeBlockError, SynchronizationResult
-from marp_artifact_updater.parser import iter_regions, replace_regions
-from marp_artifact_updater.paths import resolve_under_root
+from markdown_artifact_updater.handlers import render_region
+from markdown_artifact_updater.model import IncludeBlockError, SynchronizationResult
+from markdown_artifact_updater.parser import iter_regions, replace_regions
+from markdown_artifact_updater.paths import resolve_under_root
 
 
 def _fingerprint(text: str) -> str:
@@ -21,7 +21,7 @@ def _atomic_write(path: Path, content: str) -> None:
     with tempfile.NamedTemporaryFile(
         "wb",
         dir=path.parent,
-        prefix=".marp-artifact-updater-",
+        prefix=".markdown-artifact-updater-",
         delete=False,
     ) as temporary:
         temporary.write(content.encode("utf-8"))

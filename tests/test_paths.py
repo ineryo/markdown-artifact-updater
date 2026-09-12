@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 
-from marp_artifact_updater.paths import PathSafetyError, resolve_under_root
+from markdown_artifact_updater.paths import PathSafetyError, resolve_under_root
 
 
 def test_resolve_under_root_accepts_existing_regular_file(tmp_path: Path) -> None:

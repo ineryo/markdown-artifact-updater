@@ -101,7 +101,7 @@ wheels = [
 ]
 
 [[package]]
-name = "marp-artifact-updater"
+name = "markdown-artifact-updater"
 version = "0.0.0.dev0"
 source = { editable = "." }
 

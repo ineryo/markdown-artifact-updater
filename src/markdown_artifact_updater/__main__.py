@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from marp_artifact_updater.cli import main
+from markdown_artifact_updater.cli import main
 
 if __name__ == "__main__":
     raise SystemExit(main())
