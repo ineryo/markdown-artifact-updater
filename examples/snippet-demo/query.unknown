@@ -1,0 +1,5 @@
+-- snippet:start recent-results
+SELECT name, score
+FROM results
+ORDER BY score DESC;
+-- snippet:end recent-results

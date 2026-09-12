@@ -4,14 +4,28 @@ Marp Artifact Updater deterministically refreshes explicitly delimited generated
 regions in a Marp Markdown deck. It changes only region bodies, defaults to
 read-only operation, and requires an explicit `--apply` before writing.
 
-## Quick start
+## Install and quick start
 
-The included example is executable from the repository root:
+For local development or a repository checkout, install the declared development
+tools and run the package in place:
 
 ```console
-uv run marp-artifact-updater check deck.md --repo-root examples/basic
-uv run marp-artifact-updater update deck.md --repo-root examples/basic --apply
-uv run marp-artifact-updater check deck.md --repo-root examples/basic
+uv sync --group dev
+uv run marp-artifact-updater --help
+```
+
+To install the current checkout as a user-facing command, use:
+
+```console
+uv tool install .
+```
+
+The complete executable presentation example is
+[`examples/snippet-demo/`](examples/snippet-demo/). From the repository root:
+
+```console
+uv run marp-artifact-updater update presentation.md --repo-root examples/snippet-demo --apply
+uv run marp-artifact-updater check presentation.md --repo-root examples/snippet-demo
 ```
 
 The first `check` exits 1 because the region is stale. After `update --apply`,
@@ -31,6 +45,9 @@ marp-artifact-updater check slides/deck.md --repo-root . --json
 An update needed in dry-run mode exits 1. Invalid or unsafe input exits 2.
 `--json` produces a stable result object containing change state, per-region
 counts, warnings, paths, and SHA-256 fingerprints.
+
+`update` is a dry run unless `--apply` is supplied. The updater never changes
+content outside a recognized include region.
 
 ## Supported generated regions
 

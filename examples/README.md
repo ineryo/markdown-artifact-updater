@@ -1,5 +1,6 @@
 # Examples
 
+`snippet-demo/` is the complete five-slide executable presentation example.
 `basic/` is a minimal Marp deck with an explicit generated snippet region. Run
 from the repository root:
 
