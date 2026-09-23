@@ -1,89 +1,104 @@
 # Markdown Artifact Updater
 
-Markdown Artifact Updater deterministically refreshes explicitly delimited generated
-regions in a Marp Markdown deck. It changes only region bodies, defaults to
-read-only operation, and requires an explicit `--apply` before writing.
+**Safely materialize already-produced technical artifacts into hand-authored Markdown.**
 
-## Install and quick start
+Markdown Artifact Updater refreshes only small, explicit generated regions for artifacts such as code snippets, CSV tables, figures, quotations, equations, and provenance. It separates three responsibilities:
 
-For local development or a repository checkout, install the declared development
-tools and run the package in place:
+```text
+analysis / notebook / benchmark / source code
+                    ↓
+        saved artifacts: CSV, SVG, image, snippets
+                    ↓
+          Markdown Artifact Updater
+                    ↓
+             hand-authored Markdown
+                    ↓
+          renderer, site, or Marp CLI
+```
+
+It does not run your analysis pipeline or render the document. It materializes selected projections of files your project already produced.
+
+## First success
+
+A clean, ready-to-check example lives in [`examples/quickstart/`](examples/quickstart/). From a checkout:
+
+```console
+uv sync --group dev
+uv run markdown-artifact-updater check report.md --repo-root examples/quickstart
+```
+
+The check is read-only and exits `0`. To see a bounded update, change the marked string in `examples/quickstart/source.py`, then run:
+
+```console
+uv run markdown-artifact-updater check report.md --repo-root examples/quickstart
+uv run markdown-artifact-updater update report.md --repo-root examples/quickstart --apply
+uv run markdown-artifact-updater check report.md --repo-root examples/quickstart
+```
+
+The first command reports the pending change without writing. `--apply` changes only the explicitly bounded region; surrounding report prose remains yours.
+
+## What the updater guarantees
+
+Its deliberately limited authority is a user benefit:
+
+- only recognized, explicit generated regions are updater-owned;
+- `check` is always read-only; writes require `update --apply`;
+- text outside owned regions is byte-preserved, including existing CRLF line endings;
+- paths are confined under `--repo-root`; parent traversal and escaped symlinks are refused;
+- the normal no-exec materialization path invokes no shell and never executes notebooks; the separate `python-call` exception is explicitly allowlisted;
+- writes are atomic and repeated successful updates are idempotent;
+- `dataframe` and `figure` regions can warn that an artifact is older than a declared dependency, without regenerating it.
+
+See [the safety model](docs/safety.md) and [generated-region reference](docs/include-blocks.md).
+
+## When to use it
+
+Use it when computation is already managed elsewhere and a readable, committed Markdown document needs selected saved results kept current. It is especially useful for technical reports, research repositories, CI gates, and agent-assisted workflows where an updater should have narrow, auditable mutation and execution authority.
+
+## When not to use it
+
+- Use Quarto, Codebraid, or notebook publishing when the document should own computation and rendering.
+- Use a broad Markdown transformation/template system when arbitrary document transforms are the goal.
+- Use a snippet-specific tool when tested source excerpts are the only problem.
+- Use a broader Markdown workspace/lint/build system when that is the desired scope.
+
+This project deliberately stays narrower: read an already-produced artifact, validate and materialize it into an owned region, then stop.
+
+## Supported artifacts
+
+- **Snippets**, including saved notebook code cells without executing notebooks.
+- **Dataframes** from CSV; other table formats are deliberately unsupported.
+- **Figures**, including PNG, JPEG, GIF, SVG, WebP, AVIF, HTML, and HTM.
+- **Quotes**, **equations**, and **provenance** blocks.
+- **Python calls** only as an opt-in exception: an exact module must be allowlisted with `--allow-python-module`. Read [Python calls](docs/python-calls.md) first.
+
+## Marp is a flagship use case
+
+For a Marp deck, the flow is: saved research artifacts → this updater → Marp Markdown → Marp CLI. [Marp Artifact Updater](https://github.com/ineryo/marp-artifact-updater) is the separately packaged Marp-facing sibling. The repositories currently expose closely aligned behavior, but the tracked portfolio does not formally designate either as the other's canonical implementation or promise consolidation.
+
+## Installation and commands
+
+This pre-alpha project is currently installed from a checkout; no registry release is claimed here.
 
 ```console
 uv sync --group dev
 uv run markdown-artifact-updater --help
-```
-
-To install the current checkout as a user-facing command, use:
-
-```console
+# or install a checked-out copy as a command
 uv tool install .
 ```
 
-The complete executable presentation example is
-[`examples/snippet-demo/`](examples/snippet-demo/). From the repository root:
-
 ```console
-uv run markdown-artifact-updater update presentation.md --repo-root examples/snippet-demo --apply
-uv run markdown-artifact-updater check presentation.md --repo-root examples/snippet-demo
+markdown-artifact-updater check document.md --repo-root .
+markdown-artifact-updater update document.md --repo-root .
+markdown-artifact-updater update document.md --repo-root . --apply
+markdown-artifact-updater check document.md --repo-root . --json
 ```
 
-The first `check` exits 1 because the region is stale. After `update --apply`,
-the final `check` exits 0. Repeating the update makes no further change.
+A pending dry-run update exits `1`; malformed or unsafe input exits `2`. `--json` provides stable machine-readable result information including region counts, warnings, paths, and SHA-256 fingerprints. Python 3.12+ and [uv](https://docs.astral.sh/uv/) are required.
 
-`python -m markdown_artifact_updater` provides the same command surface.
+## More information
 
-## Commands
-
-```console
-markdown-artifact-updater check slides/deck.md --repo-root .
-markdown-artifact-updater update slides/deck.md --repo-root .       # dry run
-markdown-artifact-updater update slides/deck.md --repo-root . --apply
-markdown-artifact-updater check slides/deck.md --repo-root . --json
-```
-
-An update needed in dry-run mode exits 1. Invalid or unsafe input exits 2.
-`--json` produces a stable result object containing change state, per-region
-counts, warnings, paths, and SHA-256 fingerprints.
-
-`update` is a dry run unless `--apply` is supplied. The updater never changes
-content outside a recognized include region.
-
-## Supported generated regions
-
-`snippet`, `dataframe` (CSV), `figure`, `quote`, `equation`, `provenance`, and
-opt-in `python-call` regions are supported. Region syntax, source markers, and
-format-specific options are documented in [include blocks](docs/include-blocks.md).
-
-See [safety](docs/safety.md) for containment, atomic-write, notebook, and
-line-ending guarantees. See [Python calls](docs/python-calls.md) before opting
-in to executing a reviewed module.
-
-## Snippet semantics
-
-Snippets are explicit named source intervals, not parsed language constructs.
-Standalone `snippet:start NAME` and `snippet:end NAME` markers are recognized
-with `#`, `//`, `--`, `%`, `;`, or HTML-comment syntax. Intervals may be
-disjoint, nested, or crossing; source extensions select only a conservative
-Markdown fence hint. Notebooks are read as stored code cells and never run.
-
-## Development
-
-Python 3.12+ and [uv](https://docs.astral.sh/uv/) are required.
-
-```console
-uv sync --group dev
-uv run pytest
-uv run black --check .
-uv run ruff check .
-uv run pre-commit run --all-files
-```
-
-## Licensing
-
-This project is licensed under the [MIT License](LICENSE). See
-[licensing details](docs/licensing.md).
-
-## Security
-
-Please follow `SECURITY.md` for private vulnerability reporting guidance.
+- [`examples/quickstart/`](examples/quickstart/) — clean onboarding example.
+- [`examples/snippet-demo/`](examples/snippet-demo/) — fuller executable Marp example.
+- [`examples/basic/`](examples/basic/) — intentionally stale update fixture, not the primary onboarding path.
+- [Architecture](docs/architecture.md), [contributing](CONTRIBUTING.md), [license](LICENSE), and [security reporting](SECURITY.md).
