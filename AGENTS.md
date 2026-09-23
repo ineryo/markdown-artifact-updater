@@ -2,18 +2,14 @@
 
 ## Scope
 
-This repository is independently governed. Work only within the explicitly
-authorized milestone and tracked-path boundary. Do not add a remote, push,
-publish, select a final license, or implement a later milestone without human
-authority.
+This repository is independently governed. Work only within the explicitly authorized task and tracked-path boundary. Do not add a remote, publish a registry release, select a different license, or make a structural product decision without explicit human authority.
 
-## T2 boundary
+## Current product boundary
 
-T2 supports only package importability, help, version reporting, and equivalent
-`python -m marp_artifact_updater` behavior. Marp parsing, check/update behavior,
-file rewriting, notebooks, Python calls, rendering, and export are prohibited.
+The implemented command supports deterministic `check` and explicit `update --apply` for recognized generated regions in Markdown. Preserve its narrow authority: no implicit writes, repository-root containment, no notebook execution, and no responsibility for artifact generation or rendering. The normal materialization path invokes no shell; `python-call` is a separately explicit, exact-module allowlist capability whose module behavior remains out of scope.
+
+Do not expand this project into a general build system, renderer, or unconstrained execution framework without separately authorized scope.
 
 ## Quality
 
-Use uv with Python 3.12+. Run pytest, Black, Ruff, and local pre-commit hooks
-before review. Keep the worktree clean and surface blockers explicitly.
+Use uv with Python 3.12+. Run pytest, Black, Ruff, and local pre-commit hooks before review. Keep the worktree clean and surface blockers explicitly.
