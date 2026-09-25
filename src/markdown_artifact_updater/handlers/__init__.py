@@ -76,6 +76,14 @@ def _render_snippet(region: IncludeRegion, root: Path) -> str:
     return f"{marker}{language.rstrip()}\n{code}\n{marker}"
 
 
+def _render_file(region: IncludeRegion, root: Path) -> str:
+    """Include an entire UTF-8 text file without interpreting its contents."""
+    path_text, options = parse_spec(require_spec("file", region.spec))
+    if options:
+        raise IncludeBlockError("file-include does not accept options")
+    return _read_text(root, path_text).rstrip("\n")
+
+
 def _markdown_table(rows: list[dict[str, str]], columns: list[str]) -> str:
     def cell(value: object) -> str:
         return str(value).replace("|", "\\|").replace("\n", "<br>")
@@ -235,6 +243,8 @@ def render_region(
     """Render a single region and update only deterministic local bookkeeping."""
     if region.kind == "snippet":
         rendered = _render_snippet(region, root)
+    elif region.kind == "file":
+        rendered = _render_file(region, root)
     elif region.kind == "dataframe":
         rendered = _render_dataframe(region, root, warnings)
     elif region.kind == "figure":

@@ -9,6 +9,7 @@ from markdown_artifact_updater.model import IncludeBlockError
 
 SUPPORTED_KINDS = (
     "snippet",
+    "file",
     "dataframe",
     "figure",
     "quote",
@@ -18,7 +19,7 @@ SUPPORTED_KINDS = (
 )
 
 _REGION_RE = re.compile(
-    r"(?P<start><!--\s*(?P<kind>snippet|dataframe|figure|quote|equation|python-call|provenance)-include(?:\s*:\s*(?P<spec>.*?))?\s*-->)"
+    r"(?P<start><!--\s*(?P<kind>snippet|file|dataframe|figure|quote|equation|python-call|provenance)-include(?:\s*:\s*(?P<spec>.*?))?\s*-->)"
     r"(?P<body>.*?)"
     r"(?P<end><!--\s*(?P=kind)-include-end\s*-->)",
     re.DOTALL,

@@ -102,3 +102,5 @@ A pending dry-run update exits `1`; malformed or unsafe input exits `2`. `--json
 - [`examples/snippet-demo/`](examples/snippet-demo/) — fuller executable Marp example.
 - [`examples/basic/`](examples/basic/) — intentionally stale update fixture, not the primary onboarding path.
 - [Architecture](docs/architecture.md), [contributing](CONTRIBUTING.md), [license](LICENSE), and [security reporting](SECURITY.md).
+
+`file` regions materialize one complete repository-relative UTF-8 text file without transforming or executing it; see the [generated-region reference](docs/include-blocks.md).

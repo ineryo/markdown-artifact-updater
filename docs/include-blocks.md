@@ -27,6 +27,9 @@ result fields and SHA-256 fingerprints.
 ```
 <!-- snippet-include-end -->
 
+<!-- file-include: docs/generated-section.md -->
+<!-- file-include-end -->
+
 <!-- dataframe-include: assets/results.csv?sort_by=score&ascending=false -->
 <!-- dataframe-include-end -->
 
@@ -48,6 +51,11 @@ Snippet extraction is language-light: recognized standalone control lines use
 Extensions affect only the suggested Markdown fence. Each name has exactly one
 start and end marker; intervals may be independent, nested, or crossing. All
 recognized marker control lines are omitted from rendered source.
+
+`file` regions insert the complete UTF-8 text of one repository-relative file.
+They intentionally have no options, transformations, or executable behavior;
+use them for a generated Markdown section that should remain valid Markdown in
+the containing document.
 
 | Source file | Markers |
 | --- | --- |
