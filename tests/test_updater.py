@@ -10,7 +10,11 @@ from pathlib import Path
 import pytest
 
 from markdown_artifact_updater import updater
-from markdown_artifact_updater.model import PathSafetyError, PythonCallDeniedError
+from markdown_artifact_updater.model import (
+    IncludeBlockError,
+    PathSafetyError,
+    PythonCallDeniedError,
+)
 from markdown_artifact_updater.updater import synchronize_markdown
 
 
@@ -94,7 +98,7 @@ def test_file_include_rejects_options_and_path_escapes(tmp_path: Path) -> None:
         "<!-- file-include: generated.md?format=markdown -->\nold\n<!-- file-include-end -->\n",
     )
 
-    with pytest.raises(Exception, match="does not accept options"):
+    with pytest.raises(IncludeBlockError, match="does not accept options"):
         synchronize_markdown(tmp_path, deck)
 
 
