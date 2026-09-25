@@ -51,7 +51,7 @@ content outside a recognized include region.
 
 ## Supported generated regions
 
-`snippet`, `dataframe` (CSV), `figure`, `quote`, `equation`, `provenance`, and
+`snippet`, `file`, `dataframe` (CSV), `figure`, `quote`, `equation`, `provenance`, and
 opt-in `python-call` regions are supported. Region syntax, source markers, and
 format-specific options are documented in [include blocks](docs/include-blocks.md).
 

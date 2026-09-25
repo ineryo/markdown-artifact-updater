@@ -69,6 +69,35 @@ def test_cpp_snippet_uses_valid_cpp_line_comment_markers(tmp_path: Path) -> None
     assert "```cpp" in result.generated_text
 
 
+def test_file_include_inserts_complete_markdown_without_fencing(tmp_path: Path) -> None:
+    _write(
+        tmp_path / "generated.md",
+        "## Generated\n\n| key | value |\n| --- | --- |\n| a | b |\n",
+    )
+    deck = _write(
+        tmp_path / "deck.md",
+        "before\n<!-- file-include: generated.md -->\nold\n<!-- file-include-end -->\nafter\n",
+    )
+
+    result = synchronize_markdown(tmp_path, deck)
+
+    assert "## Generated" in result.generated_text
+    assert "| a | b |" in result.generated_text
+    assert "```markdown" not in result.generated_text
+    assert result.counts == {"file": 1}
+
+
+def test_file_include_rejects_options_and_path_escapes(tmp_path: Path) -> None:
+    _write(tmp_path / "generated.md", "content\n")
+    deck = _write(
+        tmp_path / "deck.md",
+        "<!-- file-include: generated.md?format=markdown -->\nold\n<!-- file-include-end -->\n",
+    )
+
+    with pytest.raises(Exception, match="does not accept options"):
+        synchronize_markdown(tmp_path, deck)
+
+
 def test_cpp_snippet_accepts_a_recognized_language_light_marker(tmp_path: Path) -> None:
     _write(
         tmp_path / "selection_sort.cpp",
